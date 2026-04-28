@@ -44,6 +44,12 @@ Create `client/.env`:
 VITE_API_URL=http://localhost:5000/api
 ```
 
+For Netlify, set `VITE_API_URL` in the Netlify dashboard to your deployed backend URL:
+
+```env
+VITE_API_URL=https://your-render-backend-url.onrender.com/api
+```
+
 ## Local Setup
 
 1. Install dependencies:
