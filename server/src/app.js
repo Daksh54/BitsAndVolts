@@ -7,7 +7,14 @@ import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 export const createApp = () => {
   const app = express();
-  const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
+  const defaultOrigins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:4173",
+    "http://127.0.0.1:4173",
+    "https://bitsandvoltsassignment.netlify.app"
+  ];
+  const allowedOrigins = (process.env.CLIENT_ORIGIN || defaultOrigins.join(","))
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);

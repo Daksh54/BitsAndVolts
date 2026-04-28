@@ -1,8 +1,14 @@
 import axios, { AxiosError } from "axios";
 
-const apiUrl =
+const normalizeApiUrl = (url: string) => {
+  const trimmedUrl = url.replace(/\/+$/, "");
+  return trimmedUrl.endsWith("/api") ? trimmedUrl : `${trimmedUrl}/api`;
+};
+
+const apiUrl = normalizeApiUrl(
   import.meta.env.VITE_API_URL ||
-  (import.meta.env.DEV ? "http://localhost:5000/api" : "/api");
+    (import.meta.env.DEV ? "http://localhost:5000/api" : "/api")
+);
 
 export const api = axios.create({
   baseURL: apiUrl,
