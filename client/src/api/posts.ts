@@ -6,16 +6,34 @@ const compactParams = (params: PostFilters) =>
     Object.entries(params).filter(([, value]) => value !== undefined && value !== "")
   );
 
+const normalizePost = (post: Post): Post => ({
+  ...post,
+  excerpt: post.excerpt || "",
+  coverImage: post.coverImage || "",
+  content: post.content || "",
+  tags: Array.isArray(post.tags) ? post.tags : [],
+  readTime: post.readTime || 1
+});
+
 export const fetchPosts = async (filters: PostFilters) => {
   const response = await api.get<PaginatedPosts>("/posts", {
     params: compactParams(filters)
   });
-  return response.data;
+
+  return {
+    data: Array.isArray(response.data.data) ? response.data.data.map(normalizePost) : [],
+    pagination: response.data.pagination || {
+      page: 1,
+      limit: 10,
+      total: 0,
+      pages: 1
+    }
+  };
 };
 
 export const fetchPost = async (id: string) => {
   const response = await api.get<Post>(`/posts/${id}`);
-  return response.data;
+  return normalizePost(response.data);
 };
 
 export const createPost = async (payload: PostPayload) => {

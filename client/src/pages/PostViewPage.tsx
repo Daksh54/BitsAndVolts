@@ -67,6 +67,9 @@ export const PostViewPage = () => {
     return null;
   }
 
+  const tags = Array.isArray(post.tags) ? post.tags : [];
+  const content = post.content || "";
+
   return (
     <article className="detail-page">
       <div className="detail-toolbar">
@@ -117,14 +120,14 @@ export const PostViewPage = () => {
       </section>
 
       <section className="detail-content">
-        {post.content.split("\n").map((paragraph, index) => (
+        {content.split("\n").map((paragraph, index) => (
           <p key={`${post._id}-${index}`}>{paragraph}</p>
         ))}
       </section>
 
-      {post.tags.length > 0 && (
+      {tags.length > 0 && (
         <footer className="tag-row" aria-label="Post tags">
-          {post.tags.map((tag) => (
+          {tags.map((tag) => (
             <Chip key={tag} label={tag} />
           ))}
         </footer>

@@ -89,7 +89,7 @@ const toFormValues = (post?: Post): PostFormFields => {
     category: post.category,
     excerpt: post.excerpt || "",
     coverImage: post.coverImage || "",
-    tags: post.tags.join(", "),
+    tags: Array.isArray(post.tags) ? post.tags.join(", ") : "",
     status: post.status,
     content: post.content
   };
