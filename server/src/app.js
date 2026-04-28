@@ -1,9 +1,12 @@
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import mongoose from "mongoose";
 import morgan from "morgan";
 import postRoutes from "./routes/postRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
+
+const normalizeOrigin = (origin) => origin.trim().replace(/\/+$/, "");
 
 export const createApp = () => {
   const app = express();
@@ -14,21 +17,25 @@ export const createApp = () => {
     "http://127.0.0.1:4173",
     "https://bitsandvoltsassignment.netlify.app"
   ];
-  const allowedOrigins = (process.env.CLIENT_ORIGIN || defaultOrigins.join(","))
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean);
+  const configuredOrigins = (process.env.CLIENT_ORIGIN || "").split(",");
+  const allowedOrigins = new Set(
+    [...defaultOrigins, ...configuredOrigins]
+      .map(normalizeOrigin)
+      .filter(Boolean)
+  );
 
   app.use(helmet());
   app.use(
     cors({
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || allowedOrigins.has(normalizeOrigin(origin))) {
           callback(null, true);
           return;
         }
 
-        callback(new Error(`CORS blocked origin: ${origin}`));
+        const error = new Error(`CORS blocked origin: ${origin}`);
+        error.statusCode = 403;
+        callback(error);
       }
     })
   );
@@ -39,6 +46,7 @@ export const createApp = () => {
     response.json({
       status: "ok",
       service: "bitsvolts-blog-api",
+      database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
       timestamp: new Date().toISOString()
     });
   });
