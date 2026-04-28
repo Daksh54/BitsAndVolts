@@ -1,0 +1,19 @@
+{
+  "name": "bitsvolts-blog-management",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack blog post management system for Bits and Volts assessment.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,magenta \"node server/src/server.js\" \"vite client --host 0.0.0.0 --port 5173\"",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "seed": "npm run seed -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
